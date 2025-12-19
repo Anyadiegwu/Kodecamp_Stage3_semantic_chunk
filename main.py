@@ -169,7 +169,7 @@ def upload_files(files: List[UploadFile] = File(...), context: Optional[str] = F
 
     return {"context": context, "chunks": len(new_vectors)}
 
-@app.post("/prompt")
+@app.post("/chat")
 def chat(context: str = Form(...), query: str = Form(...)):
     qvec = embed_model.encode(query).tolist()
     results = collection.query(query_embeddings=qvec, n_results=5)
@@ -192,6 +192,9 @@ def chat(context: str = Form(...), query: str = Form(...)):
 def list_contexts():
     return [d for d in os.listdir(RAG_DATA_DIR) if os.path.isdir(os.path.join(RAG_DATA_DIR, d))]
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
 
 @app.get("/context/{name}/metadata")
 def get_metadata(name: str):
